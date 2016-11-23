@@ -8,7 +8,7 @@ require('react-native/packager/babelRegisterOnly')([
 var debug = require('react-native/local-cli/util/log').out('bundle')
 //var debug = require('util').debuglog('bundle')
 var path = require('path')
-var ReactPackager = require('react-native/packager/react-packager')
+var Server = require('react-native/packager/react-packager/src/Server')
 var Bundle = require('react-native/packager/react-packager/src/Bundler/Bundle')
 var saveAssets = require('react-native/local-cli/bundle/saveAssets')
 var outputBundle = require('react-native/local-cli/bundle/output/bundle')
@@ -18,42 +18,34 @@ module.exports = function (args, config, bundleOptions) {
 
   process.env.NODE_ENV = args.dev ? 'development' : 'production'
 
-  var getClient = ReactPackager.createClientFor({
+  var getServer = new Server({
     projectRoots: config.projectRoots,
     blacklistRE: config.blacklistRE,
-    transformModulePath: args.transformer,
-    verbose: args.verbose,
-    //projectRoots: config.getProjectRoots(),
-    //assetRoots: config.getAssetRoots(),
-    //blacklistRE: config.getBlacklistRE(),
-    //getTransformOptionsModulePath: config.getTransformOptionsModulePath,
-  }).then(function (c) {
-    debug('Created ReactPackager')
-    return c
-  })
+    transformModulePath: args.transformer
+  });
 
   return Promise.resolve().then(function () {
     return [].concat(bundleOptions.entries)
   })
   .then(function (entries) {
     debug('Found Entries:', entries.join(', '))
-    return getClient.then(function (client) {
-      return Promise.all(
-        entries.map(function (file) {
-          file = path.resolve(cwd, file)
-          return outputBundle.build(client, {
-            entryFile: file,
-            sourceMapUrl: args['sourcemap-output'],
-            dev: args.dev,
-            minify: !args.dev,
-            platform: args.platform,
-          }).then(function (bundle) {
-            bundle._entry = file
-            return bundle
+    return Promise.all(
+      entries.map(function (file) {
+        file = path.resolve(cwd, file)
+        return outputBundle.build(getServer, {
+          entryFile: file,
+          sourceMapUrl: args['sourcemap-output'],
+          dev: args.dev,
+          minify: !args.dev,
+          platform: args.platform,
+        }).then(function (bundle) {
+          bundle._entry = file
+          return Promise.resolve().then(function () {
+            return bundle;
           })
         })
-      )
-    })
+      })
+    )
   })
   .then(function (bundles) {
     debug('Original Bundles:', bundles.length)
@@ -97,7 +89,7 @@ module.exports = function (args, config, bundleOptions) {
     debug('Final Bundles', bundles.length)
     bundles.forEach(function (bundle) {
       var bopts = Object.create(args)
-      bopts['bundle-output'] = bundleOptions.output(bundle._entry)
+      bopts['bundleOutput'] = bundleOptions.output(bundle._entry)
       outputBundle.save(bundle, bopts, debug)
     })
     return bundles
@@ -112,9 +104,7 @@ module.exports = function (args, config, bundleOptions) {
   })
   .then(function () {
     debug('Closing client')
-    getClient.then(function (client) {
-      client.close()
-    })
+    getServer.end()
   })
 }
 
