@@ -1,6 +1,6 @@
 {
   "name": "react-native-factor-bundle",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Factor react-native packager bundles into common shared bundles",
   "main": "index.js",
   "directories": {
@@ -9,7 +9,7 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "react-native": "^0.18.1"
+    "react-native": "^0.35.0"
   },
   "devDependencies": {
     "del": "^2.2.0",
