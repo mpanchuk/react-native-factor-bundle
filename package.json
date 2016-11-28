@@ -9,7 +9,7 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "react-native": "^0.35.0"
+    "react-native": "git://github.com/Perfectial/react-native.git#0.35"
   },
   "devDependencies": {
     "del": "^2.2.0",
