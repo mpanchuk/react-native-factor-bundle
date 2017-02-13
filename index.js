@@ -13,6 +13,7 @@ var Server = require('react-native/packager/react-packager/src/Server')
 var Bundle = require('react-native/packager/react-packager/src/Bundler/Bundle')
 var saveAssets = require('react-native/local-cli/bundle/saveAssets')
 var outputBundle = require('react-native/local-cli/bundle/output/bundle')
+var TerminalReporter = require('react-native/packager/react-packager/src/lib/TerminalReporter')
 
 module.exports = function (args, config, bundleOptions) {
   var cwd = args.cwd || process.cwd()
@@ -20,6 +21,8 @@ module.exports = function (args, config, bundleOptions) {
   process.env.NODE_ENV = args.dev ? 'development' : 'production'
 
   var getServer = new Server({
+    watch: false,
+    reporter: new TerminalReporter(),
     projectRoots: config.projectRoots,
     blacklistRE: config.blacklistRE,
     transformModulePath: args.transformer
