@@ -2,18 +2,18 @@
 
 require('react-native/packager/babelRegisterOnly')([
   /private-cli\/src/,
-  /packager\/react-packager\/src/,
+  /packager\/src/,
   /local-cli/,
 ])
 
 var debug = require('react-native/local-cli/util/log').out('bundle')
 //var debug = require('util').debuglog('bundle')
 var path = require('path')
-var Server = require('react-native/packager/react-packager/src/Server')
-var Bundle = require('react-native/packager/react-packager/src/Bundler/Bundle')
+var Server = require('react-native/packager/src/Server')
+var Bundle = require('react-native/packager/src/Bundler/Bundle')
 var saveAssets = require('react-native/local-cli/bundle/saveAssets')
 var outputBundle = require('react-native/local-cli/bundle/output/bundle')
-var TerminalReporter = require('react-native/packager/react-packager/src/lib/TerminalReporter')
+var TerminalReporter = require('react-native/packager/src/lib/TerminalReporter')
 
 module.exports = function (args, config, bundleOptions) {
   var cwd = args.cwd || process.cwd()
