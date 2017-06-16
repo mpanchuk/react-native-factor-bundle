@@ -2,7 +2,7 @@
 
 require('react-native/packager/babelRegisterOnly')([
   /private-cli\/src/,
-  /packager\/src/,
+  /packager/,
   /local-cli/,
 ])
 
